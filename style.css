@@ -1,28 +1,37 @@
-/* Configuración General */
+/* Estilo Blue Lock (Futurista y tecnológico) */
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #121214;
+    background-color: #080a11; /* Azul muy oscuro */
     color: #ffffff;
     text-align: center;
 }
 
 header {
-    background-color: #1a1b20;
-    padding: 15px;
-    border-bottom: 3px solid #ffcc00;
+    background-color: #0f1322;
+    padding: 20px;
+    border-bottom: 3px solid #00d2ff; /* Azul neón */
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
 }
 
 header h1 {
-    margin: 0 0 10px 0;
-    color: #ffcc00;
+    margin: 0;
+    color: #00d2ff;
+    font-style: italic;
+    text-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+}
+
+.subtitulo {
+    margin: 5px 0 15px 0;
+    font-size: 0.9rem;
+    color: #888;
     font-style: italic;
 }
 
 nav button {
-    background-color: #2a2b30;
-    color: white;
-    border: none;
+    background-color: #161c33;
+    color: #00d2ff;
+    border: 1px solid #00d2ff;
     padding: 10px 20px;
     margin: 0 5px;
     font-weight: bold;
@@ -32,11 +41,12 @@ nav button {
 }
 
 nav button:hover {
-    background-color: #ffcc00;
-    color: black;
+    background-color: #00d2ff;
+    color: #080a11;
+    box-shadow: 0 0 10px #00d2ff;
 }
 
-/* Control de Pantallas */
+/* Pantallas */
 .seccion-pantalla {
     display: none;
     padding: 20px;
@@ -50,22 +60,22 @@ nav button:hover {
 
 /* LOBBY */
 .lobby-contenedor {
-    background-color: #1a1b20;
+    background-color: #0f1322;
     padding: 40px;
     border-radius: 15px;
-    border: 1px solid #333;
+    border: 1px solid #1c233d;
 }
 
 .btn-partido-rapido {
-    background: linear-gradient(135deg, #ff0055, #ffcc00);
+    background: linear-gradient(135deg, #0055ff, #00d2ff);
     color: white;
     border: none;
     padding: 15px 40px;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     border-radius: 30px;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(255, 0, 85, 0.4);
+    box-shadow: 0 5px 15px rgba(0, 210, 255, 0.4);
     transition: transform 0.2s;
 }
 
@@ -74,25 +84,28 @@ nav button:hover {
 }
 
 .consola-partido {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #0d0e10;
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #05070a;
     border-radius: 10px;
+    border-left: 4px solid #00d2ff;
     font-family: monospace;
-    color: #00ff66;
+    color: #00ffcc;
     min-height: 40px;
+    text-align: left;
 }
 
-/* CAMPO DE FÚTBOL SALA */
+/* CAMPO DE JUEGO (Azul tecnológico de entrenamiento) */
 .campo-futbol-sala {
-    background-color: #1e4620;
-    border: 3px solid white;
+    background-color: #0c182b;
+    border: 3px solid #00d2ff;
     border-radius: 10px;
     padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 15px;
     align-items: center;
+    box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.3);
 }
 
 .ala-contenedor {
@@ -102,49 +115,95 @@ nav button:hover {
 }
 
 .posicion-jugador {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 8px;
     padding: 10px;
-    width: 130px;
+    width: 140px;
 }
 
 .posicion-jugador h3 {
     margin: 0 0 8px 0;
-    font-size: 0.9rem;
-    color: #ccc;
+    font-size: 0.8rem;
+    color: #00d2ff;
+    text-transform: uppercase;
 }
 
-/* DISEÑO DE CARTAS */
+/* CARTAS */
 .carta-vacia {
-    border: 2px dashed #666;
-    height: 120px;
+    border: 2px dashed #1c233d;
+    height: 130px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #666;
+    color: #4c5b8f;
     border-radius: 8px;
 }
 
 .carta-jugador {
-    background: linear-gradient(135deg, #ffd700, #b8860b);
-    color: black;
+    color: white;
     border-radius: 8px;
-    padding: 10px;
-    height: 120px;
+    padding: 12px;
+    height: 130px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.8);
+    border: 2px solid transparent;
+}
+
+.header-carta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .carta-jugador .media {
-    font-size: 1.5rem;
-    align-self: flex-start;
+    font-size: 1.6rem;
+    text-shadow: 1px 1px 2px black;
+}
+
+.carta-jugador .pos {
+    background-color: rgba(0,0,0,0.5);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.75rem;
 }
 
 .carta-jugador .nombre {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px black;
+}
+
+.carta-jugador .habilidad {
+    font-size: 0.7rem;
+    font-style: italic;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 3px;
+    border-radius: 3px;
+    color: #00ffcc;
+}
+
+/* RARIDADES DE CARTAS */
+.rareza-elite {
+    background: linear-gradient(135deg, #001133, #00d2ff);
+    border-color: #00d2ff;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.6);
+}
+
+.rareza-oro {
+    background: linear-gradient(135deg, #3a2e00, #ffb700);
+    border-color: #ffb700;
+}
+
+.rareza-plata {
+    background: linear-gradient(135deg, #222, #a0a0a0);
+    border-color: #a0a0a0;
+}
+
+.rareza-bronce {
+    background: linear-gradient(135deg, #2b1100, #b25900);
+    border-color: #b25900;
 }
 
 /* GACHA */
@@ -155,21 +214,22 @@ nav button:hover {
 }
 
 .sobre {
-    background-color: #2a2b30;
-    border: 2px solid #ffcc00;
+    background-color: #0f1322;
+    border: 2px solid #00d2ff;
     border-radius: 10px;
     padding: 30px;
-    width: 200px;
+    width: 220px;
     cursor: pointer;
     transition: 0.3s;
 }
 
 .sobre:hover {
-    box-shadow: 0 0 15px #ffcc00;
+    box-shadow: 0 0 20px #00d2ff;
 }
 
 .btn-abrir {
-    background-color: #ffcc00;
+    background: linear-gradient(135deg, #00d2ff, #0055ff);
+    color: white;
     border: none;
     padding: 10px;
     font-weight: bold;
@@ -180,7 +240,8 @@ nav button:hover {
 
 .pantalla-recompensa {
     margin-top: 30px;
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(5, 7, 10, 0.95);
+    border: 1px solid #00d2ff;
     padding: 20px;
     border-radius: 10px;
     display: flex;
@@ -195,7 +256,8 @@ nav button:hover {
 .btn-guardar {
     margin-top: 15px;
     padding: 10px 20px;
-    background-color: #00ff66;
+    background-color: #00ffcc;
+    color: #080a11;
     border: none;
     font-weight: bold;
     cursor: pointer;

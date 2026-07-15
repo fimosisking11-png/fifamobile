@@ -1,84 +1,72 @@
-// 1. BASE DE DATOS DE PERSONAJES PERSONALIZADOS
-const personajesDisponibles = [
-    { nombre: "Goku", posicion: "piv", media: 95, ritmo: 99, tiro: 98 },
-    { nombre: "Vegeta", posicion: "ali", media: 92, ritmo: 95, tiro: 93 },
-    { nombre: "Spiderman", posicion: "ald", media: 88, ritmo: 94, tiro: 80 },
-    { nombre: "Batman", posicion: "cie", media: 89, ritmo: 85, tiro: 78 },
-    { nombre: "Iron Man", posicion: "por", media: 90, ritmo: 88, tiro: 85 },
-    { nombre: "Pikachu", posicion: "ali", media: 82, ritmo: 96, tiro: 75 },
-    { nombre: "Shrek", posicion: "cie", media: 85, ritmo: 60, tiro: 80 },
-    { nombre: "Sonic", posicion: "ald", media: 94, ritmo: 99, tiro: 82 },
-    { nombre: "Casillas (Retro)", posicion: "por", media: 91, ritmo: 80, tiro: 10 }
-];
+// script.js - Lógica del juego Blue Lock Futsal
 
-// 2. NUESTRO QUINTETO TITULAR ACTUAL (Vacío al empezar)
+// Nuestro quinteto titular actual (se llena con lo que salga del gacha)
 let miQuinteto = {
-    por: null, // Portero
-    cie: null, // Cierre
-    ali: null, // Ala Izquierdo
-    ald: null, // Ala Derecho
-    piv: null  // Pívot
+    por: null,
+    cie: null,
+    ali: null,
+    ald: null,
+    piv: null
 };
 
-// Variable para guardar temporalmente el último jugador que nos salió en el Gacha
 let jugadorObtenidoTemporal = null;
 
-// 3. NAVEGACIÓN ENTRE SECCIONES
+// Navegación
 function mostrarSeccion(idSeccion) {
-    // Ocultar todas las pantallas
     const pantallas = document.querySelectorAll('.seccion-pantalla');
     pantallas.forEach(pantalla => pantalla.classList.remove('activa'));
-
-    // Mostrar la seleccionada
     document.getElementById(idSeccion).classList.add('activa');
 }
 
-// 4. LÓGICA DEL GACHA (ABRIR SOBRES)
+// Gacha (Abrir sobre)
 function abrirSobre() {
-    // Seleccionar un jugador aleatorio de la base de datos
+    // Escogemos un jugador aleatorio del archivo 'jugadores.js'
     const indiceAleatorio = Math.floor(Math.random() * personajesDisponibles.length);
     jugadorObtenidoTemporal = personajesDisponibles[indiceAleatorio];
 
-    // Mostrar la recompensa en pantalla
+    // Asignamos una clase CSS especial según su rareza
+    let claseRareza = "rareza-" + jugadorObtenidoTemporal.rareza.toLowerCase();
+
     const contenedorCarta = document.getElementById('carta-recompensa');
     contenedorCarta.innerHTML = `
-        <div class="carta-jugador">
-            <span class="media">${jugadorObtenidoTemporal.media}</span>
+        <div class="carta-jugador ${claseRareza}">
+            <div class="header-carta">
+                <span class="media">${jugadorObtenidoTemporal.media}</span>
+                <span class="pos">${jugadorObtenidoTemporal.posicion.toUpperCase()}</span>
+            </div>
             <span class="nombre">${jugadorObtenidoTemporal.nombre}</span>
-            <span style="font-size: 0.8rem; color: #333;">POS: ${jugadorObtenidoTemporal.posicion.toUpperCase()}</span>
+            <span class="habilidad">⭐ ${jugadorObtenidoTemporal.habilidad}</span>
         </div>
     `;
 
-    // Quitar la clase "oculto" de la sección de recompensa
     document.getElementById('pantalla-recompensa').classList.remove('oculto');
 }
 
 function cerrarRecompensa() {
     if (jugadorObtenidoTemporal) {
-        // Guardamos el jugador en la posición correspondiente del equipo
         const pos = jugadorObtenidoTemporal.posicion;
         miQuinteto[pos] = jugadorObtenidoTemporal;
-
-        // Actualizamos la interfaz del equipo
         actualizarEquipoVisual();
     }
 
-    // Ocultamos la recompensa de nuevo
     document.getElementById('pantalla-recompensa').classList.add('oculto');
     jugadorObtenidoTemporal = null;
-    alert("¡Jugador enviado a tu quinteto!");
 }
 
-// 5. ACTUALIZAR EL MAPA DEL EQUIPO VISUALMENTE
+// Actualizar alineación visualmente
 function actualizarEquipoVisual() {
     for (let pos in miQuinteto) {
         const divPosicion = document.getElementById(`pos-${pos}`);
         const jugador = miQuinteto[pos];
 
         if (jugador) {
-            divPosicion.className = "carta-jugador";
+            let claseRareza = "rareza-" + jugador.rareza.toLowerCase();
+            divPosicion.className = `carta-jugador ${claseRareza}`;
             divPosicion.innerHTML = `
-                <span class="media">${jugador.media}</span>
+                <div class="header-carta">
+                    <span class="media">${jugador.media}</span>
+                    <span class="pos">${pos.toUpperCase()}</span>
+                </div>
                 <span class="nombre">${jugador.nombre}</span>
             `;
         } else {
@@ -88,12 +76,11 @@ function actualizarEquipoVisual() {
     }
 }
 
-// 6. LÓGICA DE PARTIDO RÁPIDO (LOBBY)
+// Simulación de partido rápido (Egoísta)
 function iniciarPartidoRapido() {
     const consola = document.getElementById('resultado-partido');
-    consola.innerHTML = "⚽ Buscando rival...";
+    consola.innerHTML = "⚽ Buscando un rival digno en las instalaciones de Blue Lock...";
 
-    // Comprobamos cuántos jugadores tenemos en el quinteto
     let jugadoresContratados = 0;
     let sumaMedias = 0;
     for (let pos in miQuinteto) {
@@ -103,37 +90,39 @@ function iniciarPartidoRapido() {
         }
     }
 
-    // Validación si no tienes equipo para jugar
     if (jugadoresContratados < 5) {
         setTimeout(() => {
-            consola.innerHTML = "❌ Error: Necesitas tener los 5 jugadores en tu alineación de Fútbol Sala para poder jugar. ¡Ve a abrir sobres en el Gacha!";
-        }, 1000);
+            consola.innerHTML = "❌ Jinpachi Ego dice: 'No puedes crear una reacción química con un equipo incompleto. Consigue 5 jugadores en el Gacha'.";
+        }, 1200);
         return;
     }
 
-    // Si tenemos equipo, calculamos el resultado
     setTimeout(() => {
-        consola.innerHTML = "⚽ ¡Partido en juego contra 'Team Villanos'! ⚽";
+        consola.innerHTML = "🔥 ¡Partido en marcha contra el EQUIPO V (Nagi, Reo, Zantetsu)! 🔥";
         
         setTimeout(() => {
-            const mediaEquipo = Math.round(sumaMedias / 5);
-            const mediaRival = 86; // Rival con media fija para la prueba
+            const mediaTuya = Math.round(sumaMedias / 5);
+            const mediaRival = 84; // El Equipo V es duro de pelar
             
-            // Lógica rápida de simulación basada en la media de tu equipo
-            let golesTus = Math.floor(Math.random() * 4) + (mediaEquipo > mediaRival ? 2 : 0);
-            let golesRival = Math.floor(Math.random() * 4) + (mediaRival > mediaEquipo ? 2 : 0);
+            let golesTus = Math.floor(Math.random() * 4) + (mediaTuya > mediaRival ? 2 : 0);
+            let golesRival = Math.floor(Math.random() * 4) + (mediaRival > mediaTuya ? 2 : 0);
             
+            // Elegir un anotador aleatorio de tu quinteto para darle más inmersión
+            const clavesPosiciones = ['por', 'cie', 'ali', 'ald', 'piv'];
+            const posAnotadora = clavesPosiciones[Math.floor(Math.random() * 5)];
+            const goleadorEstrella = miQuinteto[posAnotadora].nombre;
+
             let resultadoTexto = "";
             if (golesTus > golesRival) {
-                resultadoTexto = `🎉 ¡VICTORIA! Ganaste ${golesTus} - ${golesRival}. ¡Tus personajes son imparables!`;
+                resultadoTexto = `👑 ¡VICTORIA! Ganaste ${golesTus} - ${golesRival}. El gol definitivo lo marcó ${goleadorEstrella} devorando el campo.`;
             } else if (golesTus < golesRival) {
-                resultadoTexto = `😢 Derrota ${golesTus} - ${golesRival}. Tu equipo de media ${mediaEquipo} no pudo contra el rival (${mediaRival}).`;
+                resultadoTexto = `💀 DERROTA ${golesTus} - ${golesRival}. Nagi y Reo destrozaron tu defensa. Jinpachi Ego te observa con decepción...`;
             } else {
-                resultadoTexto = `🤝 Empate ${golesTus} - ${golesRival}. Un partido muy reñido.`;
+                resultadoTexto = `🤝 EMPATE ${golesTus} - ${golesRival}. Un resultado tenso. ¡${goleadorEstrella} logró empatar en el último segundo!`;
             }
 
             consola.innerHTML = resultadoTexto;
-        }, 2000);
+        }, 2500);
 
-    }, 1000);
+    }, 1200);
 }
