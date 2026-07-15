@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futsal Mobile - Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>FUTSAL MOBILE ⚽</h1>
+        <nav>
+            <button onclick="mostrarSeccion('lobby')">Lobby</button>
+            <button onclick="mostrarSeccion('equipo')">Mi Equipo</button>
+            <button onclick="mostrarSeccion('gacha')">Tienda Gacha</button>
+        </nav>
+    </header>
+
+    <main>
+        <section id="lobby" class="seccion-pantalla activa">
+            <div class="lobby-contenedor">
+                <h2>Bienvenido al Vestuario</h2>
+                <p>Gestiona tu plantilla de fútbol sala y desafía a tus rivales.</p>
+                
+                <button class="btn-partido-rapido" onclick="iniciarPartidoRapido()">
+                    ⚡ PARTIDO RÁPIDO (5v5)
+                </button>
+                
+                <div id="resultado-partido" class="consola-partido"></div>
+            </div>
+        </section>
+
+        <section id="equipo" class="seccion-pantalla">
+            <h2>Mi Alineación (Fútbol Sala)</h2>
+            <div class="campo-futbol-sala">
+                <div class="posicion-jugador">
+                    <h3>Portero</h3>
+                    <div id="pos-por" class="carta-vacia">Vacío</div>
+                </div>
+                <div class="posicion-jugador">
+                    <h3>Cierre (Defensa)</h3>
+                    <div id="pos-cie" class="carta-vacia">Vacío</div>
+                </div>
+                <div class="ala-contenedor">
+                    <div class="posicion-jugador">
+                        <h3>Ala Izquierdo</h3>
+                        <div id="pos-ali" class="carta-vacia">Vacío</div>
+                    </div>
+                    <div class="posicion-jugador">
+                        <h3>Ala Derecho</h3>
+                        <div id="pos-ald" class="carta-vacia">Vacío</div>
+                    </div>
+                </div>
+                <div class="posicion-jugador">
+                    <h3>Pívot (Delantero)</h3>
+                    <div id="pos-piv" class="carta-vacia">Vacío</div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gacha" class="seccion-pantalla">
+            <h2>Tienda de Fichajes Gacha</h2>
+            <p>¡Prueba tu suerte para conseguir mejores personajes para tu quinteto!</p>
+            
+            <div class="gacha-sobres">
+                <div class="sobre" onclick="abrirSobre()">
+                    <h3>Sobre de Bronce</h3>
+                    <p>Precio: Gratis (Prueba)</p>
+                    <button class="btn-abrir">ABRIR SOBRE 🎁</button>
+                </div>
+            </div>
+
+            <div id="pantalla-recompensa" class="pantalla-recompensa oculto">
+                <h3>¡Te ha tocado!</h3>
+                <div id="carta-recompensa"></div>
+                <button class="btn-guardar" onclick="cerrarRecompensa()">Guardar en el Club</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
