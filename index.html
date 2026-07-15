@@ -23,10 +23,25 @@
             <div class="lobby-contenedor">
                 <h2>Vestuario del Equipo Z</h2>
                 <p>Crea la fórmula química perfecta para sobrevivir a la Primera Selección.</p>
+                <p style="font-size: 0.85rem; color: #00ffcc; margin-top: -5px;">
+                    🎮 Controles: Usa las teclas <b>W-A-S-D</b> o las <b>Flechas</b> del teclado para mover a tu jugador verde.
+                </p>
                 
                 <button class="btn-partido-rapido" onclick="iniciarPartidoRapido()">
-                    ⚡ PROBAR FÓRMULA QUÍMICA (Partido)
+                    ⚡ EMPEZAR PARTIDO EN VIVO
                 </button>
+                
+                <div id="marcador" class="marcador-futsal oculto">
+                    <span id="txt-equipo-z">EGO Z</span> 
+                    <span id="puntos-z">0</span> 
+                    <span>-</span> 
+                    <span id="puntos-v">0</span> 
+                    <span id="txt-equipo-v">TEAM V</span>
+                </div>
+
+                <div class="contenedor-canvas">
+                    <canvas id="campoCanvas" width="800" height="450" class="oculto"></canvas>
+                </div>
                 
                 <div id="resultado-partido" class="consola-partido"></div>
             </div>
@@ -54,7 +69,7 @@
                     </div>
                 </div>
                 <div class="posicion-jugador">
-                    <h3>Pívot (PIV)</h3>
+                    <h3>Pívot (PIV) <span style="color: #00ffcc;">🎮</span></h3>
                     <div id="pos-piv" class="carta-vacia">Vacío</div>
                 </div>
             </div>
