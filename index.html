@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajedrez 2 - Base Clásica</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0d1117;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #58a6ff;
+            margin-bottom: 5px;
+            text-shadow: 0 0 10px rgba(88, 166, 255, 0.3);
+        }
+
+        .subtitulo {
+            color: #8b949e;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .marcador {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #58a6ff;
+        }
+
+        /* TABLERO DE AJEDREZ */
+        #tablero {
+            display: grid;
+            grid-template-columns: repeat(8, 65px);
+            grid-template-rows: repeat(8, 65px);
+            border: 4px solid #30363d;
+            border-radius: 4px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .casilla {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.8rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+
+        /* Colores de las casillas */
+        .blanca {
+            background-color: #b8c6d1;
+        }
+
+        .negra {
+            background-color: #485e70;
+        }
+
+        /* Estados visuales */
+        .casilla.seleccionada {
+            background-color: #3fb950 !important;
+        }
+
+        .casilla.movimiento-valido {
+            position: relative;
+        }
+
+        .casilla.movimiento-valido::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background-color: rgba(255, 211, 61, 0.7);
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .casilla.captura-valida {
+            background-color: #f85149 !important;
+        }
+
+        .panel-control {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #238636;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2ea043;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>AJEDREZ 2: BASE CLÁSICA ♟️</h1>
+    <p class="subtitulo">Mueve las piezas tradicionales antes de añadir los poderes</p>
+
+    <div id="marcador" class="marcador">Turno de: Blancas (⚪)</div>
+
+    <div id="tablero"></div>
+
+    <div class="panel-control">
+        <button onclick="reiniciarJuego()">Reiniciar Partida</button>
+    </div>
+
+    <script>
+        // Mapeo de piezas Unicode
+        const SIMBOLOS_PIEZAS = {
+            'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟', // Negras
+            'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'  // Blancas
+        };
+
+        // Estado inicial del tablero (Mayúsculas = Blancas, Minúsculas = Negras)
+        const TABLERO_INICIAL = [
+            ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+            ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', ''],
+            ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+            ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+        ];
+
+        let tablero = [];
+        let turnoActual = 'blancas'; // 'blancas' o 'negras'
+        let casillaSeleccionada = null; // {fila, columna}
+        let movimientosValidos = []; // Lista de {fila, columna} válidos para mover
+
+        function iniciarTablero() {
+            // Copiar la matriz inicial
+            tablero = JSON.parse(JSON.stringify(TABLERO_INICIAL));
+            casillaSeleccionada = null;
+            movimientosValidos = [];
+            turnoActual = 'blancas';
+            actualizarMarcador();
+            renderizarTablero();
+        }
+
+        function renderizarTablero() {
+            const contenedorTablero = document.getElementById('tablero');
+            contenedorTablero.innerHTML = '';
+
+            for (let f = 0; f < 8; f++) {
+                for (let c = 0; c < 8; c++) {
+                    const divCasilla = document.createElement('div');
+                    const esBlanca = (f + c) % 2 === 0;
+                    divCasilla.className = `casilla ${esBlanca ? 'blanca' : 'negra'}`;
+                    divCasilla.dataset.fila = f;
+                    divCasilla.dataset.columna = c;
+
+                    const pieza = tablero[f][c];
+                    if (pieza) {
+                        divCasilla.textContent = SIMBOLOS_PIEZAS[pieza];
+                    }
+
+                    // Resaltar casilla seleccionada
+                    if (casillaSeleccionada && casillaSeleccionada.fila === f && casillaSeleccionada.columna === c) {
+                        divCasilla.classList.add('seleccionada');
+                    }
+
+                    // Resaltar movimientos válidos
+                    const esMovimientoValido = movimientosValidos.some(m => m.fila === f && m.columna === c);
+                    if (esMovimientoValido) {
+                        if (tablero[f][c] !== '') {
+                            divCasilla.classList.add('captura-valida');
+                        } else {
+                            divCasilla.classList.add('movimiento-valido');
+                        }
+                    }
+
+                    divCasilla.addEventListener('click', () => manejarClickCasilla(f, c));
+                    contenedorTablero.appendChild(divCasilla);
+                }
+            }
+        }
+
+        function manejarClickCasilla(fila, columna) {
+            const piezaClicada = tablero[fila][columna];
+
+            // Si ya hay una casilla seleccionada y hacemos clic en un movimiento válido:
+            if (casillaSeleccionada) {
+                const esMovimientoValido = movimientosValidos.some(m => m.fila === fila && m.columna === columna);
+                
+                if (esMovimientoValido) {
+                    ejecutarMovimiento(casillaSeleccionada.fila, casillaSeleccionada.columna, fila, columna);
+                    casillaSeleccionada = null;
+                    movimientosValidos = [];
+                    renderizarTablero();
+                    return;
+                }
+            }
+
+            // Seleccionar una pieza propia
+            if (piezaClicada !== '' && esPiezaDeTurnoActual(piezaClicada)) {
+                casillaSeleccionada = { fila, columna };
+                movimientosValidos = obtenerMovimientosValidos(fila, columna);
+            } else {
+                casillaSeleccionada = null;
+                movimientosValidos = [];
+            }
+
+            renderizarTablero();
+        }
+
+        function esPiezaDeTurnoActual(pieza) {
+            if (turnoActual === 'blancas') return pieza === pieza.toUpperCase();
+            if (turnoActual === 'negras') return pieza === pieza.toLowerCase();
+            return false;
+        }
+
+        function ejecutarMovimiento(origenF, origenC, destinoF, destinoC) {
+            tablero[destinoF][destinoC] = tablero[origenF][origenC];
+            tablero[origenF][origenC] = '';
+
+            // Coronación básica de peón a Reina
+            if (tablero[destinoF][destinoC] === 'P' && destinoF === 0) tablero[destinoF][destinoC] = 'Q';
+            if (tablero[destinoF][destinoC] === 'p' && destinoF === 7) tablero[destinoF][destinoC] = 'q';
+
+            // Cambiar turno
+            turnoActual = turnoActual === 'blancas' ? 'negras' : 'blancas';
+            actualizarMarcador();
+        }
+
+        function actualizarMarcador() {
+            document.getElementById('marcador').textContent = `Turno de: ${turnoActual === 'blancas' ? 'Blancas (⚪)' : 'Negras (⚫)'}`;
+        }
+
+        // --- LÓGICA DE MOVIMIENTOS REGLAMENTARIOS ---
+
+        function obtenerMovimientosValidos(f, c) {
+            const pieza = tablero[f][c];
+            const movimientos = [];
+            const esBlanca = pieza === pieza.toUpperCase();
+            const tipoPieza = pieza.toLowerCase();
+
+            switch (tipoPieza) {
+                case 'p': // Peón
+                    const dir = esBlanca ? -1 : 1;
+                    const filaInicio = esBlanca ? 6 : 1;
+
+                    // Paso simple hacia adelante
+                    if (f + dir >= 0 && f + dir < 8 && tablero[f + dir][c] === '') {
+                        movimientos.push({ fila: f + dir, columna: c });
+                        // Doble paso inicial
+                        if (f === filaInicio && tablero[f + (2 * dir)][c] === '') {
+                            movimientos.push({ fila: f + (2 * dir), columna: c });
+                        }
+                    }
+
+                    // Capturas diagonales
+                    for (let dc of [-1, 1]) {
+                        const nc = c + dc;
+                        const nf = f + dir;
+                        if (nf >= 0 && nf < 8 && nc >= 0 && nc < 8) {
+                            const piezaObjetivo = tablero[nf][nc];
+                            if (piezaObjetivo !== '' && esEnemigo(pieza, piezaObjetivo)) {
+                                movimientos.push({ fila: nf, columna: nc });
+                            }
+                        }
+                    }
+                    break;
+
+                case 'n': // Caballo
+                    const saltosCaballo = [
+                        [-2, -1], [-2, 1], [-1, -2], [-1, 2],
+                        [1, -2], [1, 2], [2, -1], [2, 1]
+                    ];
+                    for (let [df, dc] of saltosCaballo) {
+                        const nf = f + df, nc = c + dc;
+                        if (esCasillaValida(nf, nc, pieza)) movimientos.push({ fila: nf, columna: nc });
+                    }
+                    break;
+
+                case 'r': // Torre
+                    agregarMovimientosLinea(f, c, [[-1, 0], [1, 0], [0, -1], [0, 1]], pieza, movimientos);
+                    break;
+
+                case 'b': // Alfil
+                    agregarMovimientosLinea(f, c, [[-1, -1], [-1, 1], [1, -1], [1, 1]], pieza, movimientos);
+                    break;
+
+                case 'q': // Reina
+                    agregarMovimientosLinea(f, c, [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]], pieza, movimientos);
+                    break;
+
+                case 'k': // Rey
+                    const pasosRey = [
+                        [-1, -1], [-1, 0], [-1, 1],
+                        [0, -1],          [0, 1],
+                        [1, -1],  [1, 0],  [1, 1]
+                    ];
+                    for (let [df, dc] of pasosRey) {
+                        const nf = f + df, nc = c + dc;
+                        if (esCasillaValida(nf, nc, pieza)) movimientos.push({ fila: nf, columna: nc });
+                    }
+                    break;
+            }
+
+            return movimientos;
+        }
+
+        function agregarMovimientosLinea(f, c, direcciones, piezaOrigen, movimientos) {
+            for (let [df, dc] of direcciones) {
+                let nf = f + df;
+                let nc = c + dc;
+
+                while (nf >= 0 && nf < 8 && nc >= 0 && nc < 8) {
+                    const piezaDestino = tablero[nf][nc];
+                    if (piezaDestino === '') {
+                        movimientos.push({ fila: nf, columna: nc });
+                    } else {
+                        if (esEnemigo(piezaOrigen, piezaDestino)) {
+                            movimientos.push({ fila: nf, columna: nc });
+                        }
+                        break; // Se detiene al chocar con cualquier pieza
+                    }
+                    nf += df;
+                    nc += dc;
+                }
+            }
+        }
+
+        function esCasillaValida(f, c, piezaOrigen) {
+            if (f < 0 || f >= 8 || c < 0 || c >= 8) return false;
+            const piezaDestino = tablero[f][c];
+            return piezaDestino === '' || esEnemigo(piezaOrigen, piezaDestino);
+        }
+
+        function esEnemigo(p1, p2) {
+            const esP1Blanca = p1 === p1.toUpperCase();
+            const esP2Blanca = p2 === p2.toUpperCase();
+            return esP1Blanca !== esP2Blanca;
+        }
+
+        function reiniciarJuego() {
+            iniciarTablero();
+        }
+
+        // Iniciar al cargar
+        iniciarTablero();
+    </script>
+</body>
+</html>
